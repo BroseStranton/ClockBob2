@@ -5,6 +5,10 @@ import android.graphics.Typeface;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -21,7 +25,8 @@ import java.util.Locale;
  *
  * Nommage : le nom d'origine du fichier est conservé (nettoyé par une liste
  * blanche de caractères sûrs, inspirée de SafeName.java de ReteClock).
- * En cas de doublon : "Nom.ttf", "Nom-2.ttf", etc.
+ * En cas de doublon de NOM (mais de contenu différent) : "Nom.ttf", "Nom-2.ttf", etc.
+ * La même fonte (même contenu binaire) n'est importée qu'une seule fois.
  *
  * Validation : signature binaire (TrueType, OpenType, collection .ttc) puis
  * essai réel de chargement par Typeface.createFromFile(). Une fonte refusée
@@ -29,6 +34,7 @@ import java.util.Locale;
  */
 public final class FontStore {
 
+  
     /** SharedPreferences : valeur = nom de fichier stocké, ou "" = fonte système. */
     public static final String PREFS = "clockbob_prefs";
     public static final String KEY_TIME_FONT = "time_font";
@@ -49,7 +55,20 @@ public final class FontStore {
         }
         return dir;
     }
+    /**
+ * Levée quand la fonte importée existe déjà (même contenu binaire).
+ * Hérite d'IOException : un appelant qui ne la connaît pas la traite
+ * comme une erreur d'import classique.
+ */
+public static class DuplicateFontException extends IOException {
+    /** Nom du fichier déjà stocké ayant le même contenu. */
+    public final String existingName;
 
+    public DuplicateFontException(String existingName) {
+        super("fonte deja importee : " + existingName);
+        this.existingName = existingName;
+    }
+}
     /** Nettoie un nom venu de l'extérieur vers un simple nom de fichier sûr. */
     public static String sanitiseName(String raw) {
         if (raw == null) {
@@ -105,7 +124,53 @@ public final class FontStore {
         }
         throw new IllegalStateException("trop de fichiers nommes " + name);
     }
+/**
+ * Recherche dans le dossier des fontes un fichier de même contenu que
+ * candidate (préfiltre sur la taille, puis comparaison SHA-256).
+ *
+ * @return le nom du fichier déjà stocké, ou null s'il n'y a pas de doublon
+ */
+private static String findDuplicate(File dir, File candidate) throws IOException {
+    byte[] hash = sha256(candidate);
+    long size = candidate.length();
+    File[] files = dir.listFiles();
+    if (files == null) {
+        return null;
+    }
+    for (File f : files) {
+        if (!f.isFile() || TEMP_NAME.equals(f.getName()) || f.length() != size) {
+            continue;
+        }
+        if (Arrays.equals(hash, sha256(f))) {
+            return f.getName();
+        }
+    }
+    return null;
+}
 
+/** Empreinte SHA-256 d'un fichier (lu par blocs, faible empreinte mémoire). */
+private static byte[] sha256(File f) throws IOException {
+    MessageDigest md;
+    try {
+        md = MessageDigest.getInstance("SHA-256");
+    } catch (NoSuchAlgorithmException e) {
+        throw new IOException("SHA-256 indisponible", e);
+    }
+    FileInputStream in = new FileInputStream(f);
+    try {
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = in.read(buf)) > 0) {
+            md.update(buf, 0, n);
+        }
+    } finally {
+        try {
+            in.close();
+        } catch (IOException ignored) {
+        }
+    }
+    return md.digest();
+}
     /**
      * Signature binaire des 4 premiers octets :
      * 00 01 00 00 = TrueType, "OTTO" = OpenType, "ttcf" = collection, "true" = ancien format.
@@ -183,6 +248,21 @@ public final class FontStore {
             tmp.delete();
             throw new IllegalArgumentException("fonte illisible par Android");
         }
+if (test == null) {
+            tmp.delete();
+            throw new IllegalArgumentException("fonte illisible par Android");
+        }
+
+        // Anti-doublon : la même fonte (même contenu binaire) n'est stockée qu'une fois.
+        String duplicate = findDuplicate(dir, tmp);
+        if (duplicate != null) {
+            tmp.delete();
+            throw new DuplicateFontException(duplicate);
+        }
+
+        String finalName = availableName(dir, name);
+
+                
         String finalName = availableName(dir, name);
         if (!tmp.renameTo(new File(dir, finalName))) {
             tmp.delete();
