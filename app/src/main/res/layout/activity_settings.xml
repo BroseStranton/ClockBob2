@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Titre encadré (mockup) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/title_frame"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/settings_title"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Avertissement (mockup) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/settings_warning"
+            android:textSize="13sp"
+            android:textStyle="italic" />
+
+        <!-- Fonte de l'heure -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_time_font"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinner_time_font"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <!-- Fonte de la date -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_date_font"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinner_date_font"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <!-- Champ large + bouton « … » (mockup) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edit_file_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_file_field"
+                android:inputType="none"
+                android:focusable="false"
+                android:importantForAutofill="no" />
+
+            <Button
+                android:id="@+id/btn_browse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:minWidth="48dp"
+                android:text="@string/btn_browse" />
+        </LinearLayout>
+
+        <!-- Trois boutons du bas (mockup) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_apply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_apply" />
+
+            <Button
+                android:id="@+id/btn_reset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/btn_reset" />
+
+            <Button
+                android:id="@+id/btn_close"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/btn_close" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
