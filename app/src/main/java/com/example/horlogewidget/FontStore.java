@@ -261,9 +261,6 @@ if (test == null) {
         }
 
         String finalName = availableName(dir, name);
-
-                
-        String finalName = availableName(dir, name);
         if (!tmp.renameTo(new File(dir, finalName))) {
             tmp.delete();
             throw new IOException("renommmage impossible");
