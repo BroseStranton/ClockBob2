@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ClockBob</string>
-    <string name="settings_title">Paramètres de ClockBob</string>
-    <string name="settings_warning">Les fontes sont copiées dans l\'application. Un fichier invalide sera refusé.</string>
-    <string name="label_time_font">Fonte de l\'heure</string>
-    <string name="label_date_font">Fonte de la date</string>
-    <string name="hint_file_field">Fonte à importer (.ttf, .otf, .ttc)</string>
+
+    <!-- Écran de paramètres -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_warning">TruType (.ttf), OpenType (.otf) ou une collection (.ttc).\nTout ce que cet appareil ne peut pas lire comme une fonte est refusé.</string>
+    <string name="choose_font_help">Chaque champ : choisir une police</string>
+    <string name="label_time_font">Heure</string>
+    <string name="label_date_font">Date</string>
+    <string name="label_add_font">Ajouter une police</string>
+
+    <!-- Boutons -->
     <string name="btn_browse">…</string>
-    <string name="btn_apply">Appliquer</string>
-    <string name="btn_reset">Par défaut</string>
-    <string name="btn_close">Fermer</string>
+    <string name="btn_apply">Valider</string>
+    <string name="btn_reset">Réinitialiser</string>
+    <string name="btn_close">Annuler</string>
+
+    <!-- Listes -->
     <string name="entry_default_font">Par défaut (système)</string>
+
+    <!-- Toasts (inchangés) -->
     <string name="toast_imported">Fonte importée ✓</string>
     <string name="toast_invalid">Fichier refusé : ce n\'est pas une fonte lisible par Android.</string>
     <string name="toast_copied">Fonte déjà présente : import ignoré.</string>
     <string name="toast_error">Impossible d\'importer ce fichier.</string>
     <string name="toast_applied">Réglages appliqués ✓</string>
+
+    <!-- Content descriptions du widget (inchangés) -->
     <string name="cd_time">Heure</string>
     <string name="cd_date">Date</string>
+
+    <!-- Conservé pour compatibilité éventuelle (plus référencé par le layout) -->
+    <string name="hint_file_field">Fonte à importer (.ttf, .otf, .ttc)</string>
 </resources>
