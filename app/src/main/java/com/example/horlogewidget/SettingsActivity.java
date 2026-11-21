@@ -136,37 +136,44 @@ public class SettingsActivity extends Activity {
         startActivityForResult(intent, REQUEST_PICK_FONT);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != REQUEST_PICK_FONT || resultCode != RESULT_OK
-                || data == null || data.getData() == null) {
-            return;
-        }
-        Uri uri = data.getData();
-        String suggested = queryDisplayName(uri);
-        InputStream in = null;
-        try {
-            in = getContentResolver().openInputStream(uri);
-            String storedName = FontStore.importFont(this, in, suggested);
-            editFileName.setText(displayName(storedName));
-            reloadSpinners();
-            Toast.makeText(this, getString(R.string.toast_imported), Toast.LENGTH_SHORT).show();
-        } catch (IllegalArgumentException e) {
-            editFileName.setText("");
-            Toast.makeText(this, getString(R.string.toast_invalid), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            editFileName.setText("");
-            Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_LONG).show();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                }
+  @Override
+protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode != REQUEST_PICK_FONT || resultCode != RESULT_OK
+            || data == null || data.getData() == null) {
+        return;
+    }
+
+    Uri uri = data.getData();
+    String suggested = queryDisplayName(uri);
+
+    InputStream in = null;
+    try {
+        in = getContentResolver().openInputStream(uri);
+        String storedName = FontStore.importFont(this, in, suggested);
+        editFileName.setText(displayName(storedName));
+        reloadSpinners();
+        Toast.makeText(this, getString(R.string.toast_imported), Toast.LENGTH_SHORT).show();
+    } catch (FontStore.DuplicateFontException e) {
+        // La même fonte est déjà stockée : import ignoré, sans erreur.
+        editFileName.setText(displayName(e.existingName));
+        Toast.makeText(this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show();
+    } catch (IllegalArgumentException e) {
+        editFileName.setText("");
+        Toast.makeText(this, getString(R.string.toast_invalid), Toast.LENGTH_LONG).show();
+    } catch (IOException e) {
+        editFileName.setText("");
+        Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_LONG).show();
+    } finally {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException ignored) {
             }
         }
     }
+}
 
     /** Nom d'origine du fichier choisi, lu dans le fournisseur de contenu. */
     private String queryDisplayName(Uri uri) {
