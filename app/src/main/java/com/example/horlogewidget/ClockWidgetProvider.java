@@ -47,8 +47,8 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     private static final int DATE_COLOR = 0xFFDDDDDD;
 
     /** Part de la hauteur du widget réservée à l'heure et à la date. */
-    private static final float TIME_HEIGHT_RATIO = 0.60f;
-    private static final float DATE_HEIGHT_RATIO = 0.18f;
+     private static final float TIME_HEIGHT_RATIO = 0.56f;
+     private static final float DATE_HEIGHT_RATIO = 0.22f;
     /** Le texte ne doit pas dépasser cette part de la largeur. */
     private static final float WIDTH_RATIO = 0.92f;
 
