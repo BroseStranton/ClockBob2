@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Palette écran de paramètres (thème sombre forcé, conforme maquette) -->
+    <color name="cb_bg">#141414</color>
+    <color name="cb_teal">#46C6B2</color>
+    <color name="cb_text_muted">#9E9E9E</color>
+    <color name="cb_divider">#3C3C3C</color>
+    <color name="cb_field_bg">#D9D9D9</color>
+    <color name="cb_field_text">#1A1A1A</color>
+    <color name="cb_btn_gradient_top">#EDEDED</color>
+    <color name="cb_btn_gradient_bottom">#C9C9C9</color>
+    <color name="cb_ripple">#33000000</color>
+</resources>
