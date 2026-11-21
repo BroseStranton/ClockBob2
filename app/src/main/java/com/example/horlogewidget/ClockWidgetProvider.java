@@ -43,7 +43,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     private static final int CLICK_REQUEST_CODE = 1;
 
     private static final int TIME_COLOR = Color.WHITE;
-    private static final int DATE_COLOR = 0xFFDDDDDD;
+    private static final int DATE_COLOR = Color.WHITE;
 
     /** Part de la hauteur du widget : heure 5/7, date 2/7 (comme ClockStf). */
     private static final float TIME_BAND = 5f / 7f;
