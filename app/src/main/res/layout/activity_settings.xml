@@ -1,118 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cb_bg"
+    android:fillViewport="true"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
 
-        <!-- Titre encadré (mockup) -->
+        <!-- Titre encadré -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/title_frame"
             android:gravity="center"
-            android:padding="10dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
             android:text="@string/settings_title"
-            android:textSize="20sp"
+            android:textAllCaps="true"
+            android:textColor="@color/cb_teal"
+            android:textSize="26sp"
             android:textStyle="bold" />
 
-        <!-- Avertissement (mockup) -->
+        <!-- Avertissement fontes -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="14dp"
+            android:lineSpacingExtra="3dp"
             android:text="@string/settings_warning"
-            android:textSize="13sp"
-            android:textStyle="italic" />
+            android:textColor="@color/cb_text_muted"
+            android:textSize="13sp" />
 
-        <!-- Fonte de l'heure -->
+        <!-- Filet séparateur -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/cb_divider" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="18dp"
+            android:text="@string/choose_font_help"
+            android:textColor="@color/cb_text_muted"
+            android:textSize="15sp" />
+
+        <!-- HEURE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
             android:text="@string/label_time_font"
+            android:textAllCaps="true"
+            android:textColor="@color/cb_teal"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/spinner_time_font"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/spinner_bg"
+            android:paddingStart="14dp"
+            android:paddingEnd="40dp"
+            android:spinnerMode="dropdown" />
 
-        <!-- Fonte de la date -->
+        <!-- DATE -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="22dp"
             android:text="@string/label_date_font"
+            android:textAllCaps="true"
+            android:textColor="@color/cb_teal"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/spinner_date_font"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/spinner_bg"
+            android:paddingStart="14dp"
+            android:paddingEnd="40dp"
+            android:spinnerMode="dropdown" />
 
-        <!-- Champ large + bouton « … » (mockup) -->
+        <!-- AJOUTER UNE POLICE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/label_add_font"
+            android:textAllCaps="true"
+            android:textColor="@color/cb_teal"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/edit_file_name"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:hint="@string/hint_file_field"
+                android:background="@drawable/field_bg"
+                android:importantForAutofill="no"
                 android:inputType="none"
                 android:focusable="false"
-                android:importantForAutofill="no" />
+                android:longClickable="false"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/cb_field_text"
+                android:textSize="15sp" />
 
             <Button
                 android:id="@+id/btn_browse"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:minWidth="48dp"
-                android:text="@string/btn_browse" />
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
+                android:minWidth="56dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/btn_browse"
+                android:textColor="@color/cb_field_text"
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Trois boutons du bas (mockup) -->
+        <!-- Boutons d'action : Réinitialiser · Annuler · Valider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="28dp"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_apply"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/btn_apply" />
 
             <Button
                 android:id="@+id/btn_reset"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="@string/btn_reset" />
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/btn_reset"
+                android:textColor="@color/cb_field_text"
+                android:textSize="15sp" />
 
             <Button
                 android:id="@+id/btn_close"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="@string/btn_close" />
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/btn_close"
+                android:textColor="@color/cb_field_text"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/btn_apply"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/btn_apply"
+                android:textColor="@color/cb_field_text"
+                android:textSize="15sp" />
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
