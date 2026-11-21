@@ -24,18 +24,16 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Provider du widget : dessine l'heure et la date dans des bitmaps (pour
- * pouvoir utiliser une fonte personnalisée) et les affiche via ImageView.
+ * Provider du widget : heure et date sont rendues ensemble dans UNE bitmap
+ * (RemoteViews ne permet pas d'appliquer un Typeface a un TextClock), affichee
+ * par un ImageView. La bitmap est sur-echantillonnee (x1,5) pour rester nette.
  *
- * La taille du texte s'adapte aux dimensions réelles de chaque widget
- * (lues dans getAppWidgetOptions) : l'heure occupe environ 60 % de la
- * hauteur, la date environ 20 %, et le texte est ajusté pour tenir dans
- * la largeur. Le clic sur le widget ouvre l'horloge système
- * (com.android.deskclock), comme ClockStf.
+ * Repartition verticale comme l'ancien layout de ClockStf :
+ * heure = 5/7 de la hauteur, date = 2/7. Chaque texte est dessine centre dans
+ * sa bande, a la plus grande taille qui tient (largeur et hauteur).
  *
- * Un compte à rebours d'une minute (AlarmManager, sans réveil du téléphone)
- * rafraîchit l'affichage ; des diffusions système couvrent démarrage,
- * changement d'heure et de fuseau.
+ * Mise a jour chaque minute (AlarmManager, sans reveil) + evenements systeme.
+ * Clic sur le widget : horloge systeme (com.android.deskclock).
  */
 public class ClockWidgetProvider extends AppWidgetProvider {
 
@@ -46,17 +44,16 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     private static final int TIME_COLOR = Color.WHITE;
     private static final int DATE_COLOR = 0xFFDDDDDD;
 
-    /** Part de la hauteur du widget réservée à l'heure et à la date. */
-     private static final float TIME_HEIGHT_RATIO = 0.56f;
-     private static final float DATE_HEIGHT_RATIO = 0.22f;
-    /** Le texte ne doit pas dépasser cette part de la largeur. */
-    private static final float WIDTH_RATIO = 0.92f;
+    /** Part de la hauteur du widget : heure 5/7, date 2/7 (comme ClockStf). */
+    private static final float TIME_BAND = 5f / 7f;
 
-    /** Petit cache : la même minute ne doit être dessinée qu'une fois. */
-    private static final Map<String, Bitmap> CACHE = new LinkedHashMap<String, Bitmap>(16, 0.75f, true) {
+    /** Sur-echantillonnage du rendu, pour la nettete. */
+    private static final float OVERSAMPLE = 1.5f;
+
+    private static final Map<String, Bitmap> CACHE = new LinkedHashMap<String, Bitmap>(8, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, Bitmap> eldest) {
-            return size() > 24;
+            return size() > 8;
         }
     };
 
@@ -79,7 +76,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
                                           int appWidgetId, Bundle newOptions) {
-        // Redimensionnement du widget : recalculer les tailles de texte.
+        // Redimensionnement : recalculer le rendu.
         pushAll(context);
     }
 
@@ -118,7 +115,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
         Date now = new Date();
         Locale locale = Locale.getDefault();
-        // L'heure suit le réglage 12 h / 24 h du téléphone.
+        // L'heure suit le reglage 12 h / 24 h du telephone.
         String timePattern = DateFormat.is24HourFormat(context) ? "HH:mm" : "h:mm a";
         String timeText = new SimpleDateFormat(timePattern, locale).format(now);
         String dateText = new SimpleDateFormat(
@@ -127,50 +124,27 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         float density = context.getResources().getDisplayMetrics().density;
 
         for (int id : ids) {
-            // Dimensions réelles de CE widget, en dip (disponibles depuis l'API 16).
+            // Dimensions reelles de CE widget, sur-echantillonnees pour la nettete.
             Bundle opts = mgr.getAppWidgetOptions(id);
-            int widthDp = opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110);
-            int heightDp = opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 70);
-            if (heightDp <= 0) {
-                heightDp = opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 70);
-            }
-            float widthPx = widthDp * density;
-            float heightPx = heightDp * density;
+            int w = Math.max(600, (int) (opts.getInt(
+                    AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110) * density * OVERSAMPLE));
+            int h = Math.max(300, (int) (opts.getInt(
+                    AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * OVERSAMPLE));
+
+            Bitmap bitmap = render(w, h, timeText, timeFont, dateText, dateFont);
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_clock);
-            views.setImageViewBitmap(R.id.img_time,
-                    renderText(context, timeText, timeFont,
-                            textSize(widthPx, heightPx, timeText, TIME_HEIGHT_RATIO),
-                            TIME_COLOR));
-            views.setImageViewBitmap(R.id.img_date,
-                    renderText(context, dateText, dateFont,
-                            textSize(widthPx, heightPx, dateText, DATE_HEIGHT_RATIO),
-                            DATE_COLOR));
+            views.setImageViewBitmap(R.id.img_clock, bitmap);
             views.setOnClickPendingIntent(R.id.widget_root, clockPendingIntent(context));
             mgr.updateAppWidget(id, views);
         }
     }
 
-    /**
-     * Taille de texte en pixels : part fixe de la hauteur du widget, puis
-     * réduite si nécessaire pour tenir dans la largeur.
-     */
-    private static float textSize(float widthPx, float heightPx, String text, float heightRatio) {
-        Paint probe = new Paint(Paint.ANTI_ALIAS_FLAG);
-        float size = Math.max(1f, heightPx * heightRatio);
-        probe.setTextSize(size);
-        float measured = probe.measureText(text);
-        if (measured > widthPx * WIDTH_RATIO) {
-            size = size * (widthPx * WIDTH_RATIO) / measured;
-        }
-        return size;
-    }
-
-    /** Clic sur le widget : ouvrir l'horloge système, comme ClockStf. */
+    /** Clic sur le widget : ouvrir l'horloge systeme, comme ClockStf. */
     private static PendingIntent clockPendingIntent(Context context) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.android.deskclock");
         if (intent == null) {
-            // Horloge système introuvable : repli sur l'écran de paramètres.
+            // Horloge systeme introuvable : repli sur l'ecran de parametres.
             intent = new Intent(context, SettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -180,35 +154,56 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
     // ---------- Rendu ----------
 
-    /** Dessine du texte dans un bitmap à la taille demandée, en pixels réels. */
-    static Bitmap renderText(Context context, String text, Typeface font, float textSizePx, int color) {
-        String key = text + "|" + (int) textSizePx + "|" + color + "|"
-                + ((font == null) ? "default" : font.toString());
+    /** Heure + date dans une seule bitmap : bande 5/7 pour l'heure, 2/7 pour la date. */
+    static Bitmap render(int w, int h, String timeText, Typeface timeFont,
+                         String dateText, Typeface dateFont) {
+        String key = w + "|" + h + "|" + timeText + "|" + dateText + "|"
+                + timeFont + "|" + dateFont;
         synchronized (CACHE) {
             Bitmap cached = CACHE.get(key);
             if (cached != null) {
                 return cached;
             }
         }
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextAlign(Paint.Align.LEFT);
-        paint.setTextSize(textSizePx);
-        paint.setColor(color);
-        if (font != null) {
-            paint.setTypeface(font);
-        }
-        Paint.FontMetrics fm = paint.getFontMetrics();
-        int w = Math.max(1, (int) Math.ceil(paint.measureText(text) + textSizePx * 0.10f));
-        int h = Math.max(1, (int) Math.ceil(fm.descent - fm.ascent));
-        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        new Canvas(bitmap).drawText(text, 0, -fm.ascent, paint);
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        p.setShadowLayer(6, 4, 4, 0x66000000);
+
+        int hTime = (int) (h * TIME_BAND);
+        p.setColor(TIME_COLOR);
+        drawFit(canvas, timeText, timeFont, w, hTime, 0, p);
+        p.setColor(DATE_COLOR);
+        drawFit(canvas, dateText, dateFont, w, h - hTime, hTime, p);
+
         synchronized (CACHE) {
-            CACHE.put(key, bitmap);
+            CACHE.put(key, bmp);
         }
-        return bitmap;
+        return bmp;
     }
 
-    // ---------- Compte à rebours d'une minute ----------
+    /** Dessine un texte centre dans sa bande, a la plus grande taille qui tient. */
+    private static void drawFit(Canvas canvas, String text, Typeface tf,
+                                int w, int bandH, int yOffset, Paint p) {
+        p.setTypeface(tf);
+        float size = 200f;
+        p.setTextSize(size);
+        float tw = p.measureText(text);
+        Paint.FontMetrics fm = p.getFontMetrics();
+        float th = fm.descent - fm.ascent;
+        float scale = Math.min(w * 0.92f / tw, bandH * 0.92f / th);
+        size *= scale;
+        if (size < 1f) {
+            size = 1f;
+        }
+        p.setTextSize(size);
+        tw = p.measureText(text);
+        fm = p.getFontMetrics();
+        float baseline = yOffset + bandH / 2f - (fm.ascent + fm.descent) / 2f;
+        canvas.drawText(text, (w - tw) / 2f, baseline, p);
+    }
+
+    // ---------- Compte a rebours d'une minute ----------
 
     private static PendingIntent tickPendingIntent(Context context) {
         Intent intent = new Intent(context, ClockWidgetProvider.class);
@@ -217,7 +212,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
-    /** Programme le prochain tic à la frontière de la minute suivante. */
+    /** Programme le prochain tic a la frontiere de la minute suivante. */
     static void scheduleTick(Context context) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long delay = 60000 - (System.currentTimeMillis() % 60000);
