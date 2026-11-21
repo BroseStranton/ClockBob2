@@ -14,7 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.SystemClock;
-
+import android.text.format.DateFormat;
 import android.widget.RemoteViews;
 
 import java.util.Calendar;
