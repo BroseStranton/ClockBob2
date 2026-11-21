@@ -4,23 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:background="@drawable/widget_background"
-    android:padding="8dp">
+    android:background="@drawable/widget_background">
 
-    <!-- L'heure : bitmap rendue par l'application (fonte personnalisée possible) -->
+    <!-- L'heure ET la date : une seule bitmap rendue par l'application -->
     <ImageView
-        android:id="@+id/img_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/img_clock"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="fitCenter"
         android:contentDescription="@string/cd_time" />
-
-    <!-- La date : bitmap rendue par l'application -->
-    <ImageView
-        android:id="@+id/img_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/cd_date" />
 </LinearLayout>
