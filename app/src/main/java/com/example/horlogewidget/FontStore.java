@@ -118,7 +118,7 @@ public final class FontStore {
                 && (head[2] & 0xFF) == 0 && (head[3] & 0xFF) == 0) {
             return true;
         }
-        String tag = new String(head, 0, 4, Locale.US);
+       String tag = new String(head, 0, 4, java.nio.charset.StandardCharsets.US_ASCII);
         return tag.equals("OTTO") || tag.equals("ttcf") || tag.equals("true");
     }
 
