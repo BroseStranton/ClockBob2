@@ -14,9 +14,10 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.text.format.DateFormat;
+
 import android.widget.RemoteViews;
 
+import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -49,6 +50,11 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
     /** Sur-echantillonnage du rendu, pour la nettete. */
     private static final float OVERSAMPLE = 1.5f;
+
+     private static final String[] JOURS = {"LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"};
+    private static final String[] MOIS = {
+        "JAN", "F\u00c9V", "MAR", "AVR", "MAI", "JUIN",
+        "JUIL", "AO\u00dbT", "SEP", "OCT", "NOV", "D\u00c9C"};
 
     private static final Map<String, Bitmap> CACHE = new LinkedHashMap<String, Bitmap>(8, 0.75f, true) {
         @Override
@@ -118,8 +124,11 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         // L'heure suit le reglage 12 h / 24 h du telephone.
         String timePattern = DateFormat.is24HourFormat(context) ? "HH:mm" : "h:mm a";
         String timeText = new SimpleDateFormat(timePattern, locale).format(now);
-        String dateText = new SimpleDateFormat(
-                DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale).format(now);
+        Calendar cal = Calendar.getInstance();
+        // Lundi (DAY_OF_WEEK == 2) doit donner l'index 0 : décalage de 5, modulo 7.
+        String dateText = JOURS[(cal.get(Calendar.DAY_OF_WEEK) + 5) % 7]
+                + " " + cal.get(Calendar.DAY_OF_MONTH)
+                + " " + MOIS[cal.get(Calendar.MONTH)];
 
         float density = context.getResources().getDisplayMetrics().density;
 
