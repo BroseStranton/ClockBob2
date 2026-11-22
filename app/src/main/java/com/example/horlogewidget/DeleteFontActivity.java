@@ -45,7 +45,7 @@ public class DeleteFontActivity extends Activity {
         TextView empty = (TextView) findViewById(R.id.tv_empty);
         list.removeAllViews();
 
-        List<String> fonts = FontStore.listFonts(this);
+        List<String> fonts = FontStore.listFontNames(this);
         if (fonts.isEmpty()) {
             empty.setVisibility(View.VISIBLE);
             return;
