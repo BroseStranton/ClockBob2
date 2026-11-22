@@ -87,22 +87,23 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        String action = intent.getAction();
-        boolean ours = ACTION_TICK.equals(action);
-        boolean system = AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)
-                || Intent.ACTION_BOOT_COMPLETED.equals(action)
-                || Intent.ACTION_TIME_CHANGED.equals(action)
-                || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
-                || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action);
-        if (ours || system) {
-            pushAll(context);
-            if (ours) {
-                scheduleTick(context);
-            }
-        }
+@Override
+public void onReceive(Context context, Intent intent) {
+    super.onReceive(context, intent);
+    String action = intent.getAction();
+    if (action == null) return;
+    boolean ours = ACTION_TICK.equals(action);
+    boolean system = AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)
+            || Intent.ACTION_BOOT_COMPLETED.equals(action)
+            || Intent.ACTION_TIME_CHANGED.equals(action)
+            || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
+            || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)
+            || Intent.ACTION_DATE_CHANGED.equals(action);
+    if (ours || system) {
+        pushAll(context);
+        scheduleTick(context);  // toujours ré-armer, même après reboot/réinstallation
     }
+}
 
     // ---------- Affichage ----------
 
