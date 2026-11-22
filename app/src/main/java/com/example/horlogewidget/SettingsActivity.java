@@ -76,11 +76,26 @@ public class SettingsActivity extends Activity {
             public void onClick(View v) {
                 finish();
             }
+            
         });
 
+        Button btnFonts = (Button) findViewById(R.id.btn_fonts);
+        btnFonts.setOnClickListener(new View.OnClickListener() {
+    
+            @Override
+        public void onClick(View v) {
+        startActivity(new android.content.Intent(
+                SettingsActivity.this, DeleteFontActivity.class));
+    }
+});
         reloadSpinners();
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Rafraîchit les listes si des fontes ont été supprimées dans DeleteFontActivity.
+        reloadSpinners();
+    }
     // ---------- Listes déroulantes ----------
 
     /** Libellé affiché : nom du fichier sans extension. */
