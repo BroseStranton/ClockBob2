@@ -87,7 +87,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-@Override
+
 public void onReceive(Context context, Intent intent) {
     super.onReceive(context, intent);
     String action = intent.getAction();
