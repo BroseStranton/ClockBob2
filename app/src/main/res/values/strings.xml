@@ -32,4 +32,13 @@
 
     <!-- Conservé pour compatibilité éventuelle (plus référencé par le layout) -->
     <string name="hint_file_field">Fonte à importer (.ttf, .otf, .ttc)</string>
+
+    <!-- Pour la nouvelle fenêtre de suppression des fontes -->
+<string name="label_manage_fonts">Fontes</string>
+<string name="delete_font_title">Supprimer une fonte</string>
+<string name="btn_delete">Supprimer</string>
+<string name="btn_yes">Oui</string>
+<string name="btn_no">Non</string>
+<string name="confirm_delete_font">Voulez-vous vraiment supprimer cette fonte ?</string>
+<string name="no_installed_fonts">Aucune fonte installée.</string>
 </resources>
