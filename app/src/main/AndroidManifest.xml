@@ -19,7 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+<activity
+    android:name=".DeleteFontActivity"
+    android:theme="@android:style/Theme.DeviceDefault.DayNight" />
+        
         <receiver
             android:name=".ClockWidgetProvider"
             android:exported="true">
