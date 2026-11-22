@@ -144,45 +144,54 @@
 
         <!-- Boutons d'action : Réinitialiser · Annuler · Valider -->
         <LinearLayout
-            android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_apply"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/btn_apply" />
 
-            <Button
-                android:id="@+id/btn_reset"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/btn_bg"
-                android:text="@string/btn_reset"
-                android:textColor="@color/cb_field_text"
-                android:textSize="15sp" />
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_reset" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_close"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/btn_bg"
-                android:text="@string/btn_close"
-                android:textColor="@color/cb_field_text"
-                android:textSize="15sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_apply"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                android:background="@drawable/btn_bg"
-                android:text="@string/btn_apply"
-                android:textColor="@color/cb_field_text"
-                android:textSize="15sp" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btn_fonts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/label_manage_fonts" />
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_close" />
+    </LinearLayout>
+</LinearLayout>
 
     </LinearLayout>
 </ScrollView>
