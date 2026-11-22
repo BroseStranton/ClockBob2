@@ -200,6 +200,7 @@ protected void onActivityResult(int requestCode, int resultCode, android.content
         FontStore.prefsPut(this, FontStore.KEY_DATE_FONT,
                 dateValues.get(spinnerDate.getSelectedItemPosition()));
         ClockWidgetProvider.pushAll(this);
+         ClockWidgetProvider.scheduleTick(this); 
         Toast.makeText(this, getString(R.string.toast_applied), Toast.LENGTH_SHORT).show();
     }
 
@@ -208,6 +209,7 @@ protected void onActivityResult(int requestCode, int resultCode, android.content
         FontStore.prefsPut(this, FontStore.KEY_DATE_FONT, "");
         reloadSpinners();
         ClockWidgetProvider.pushAll(this);
+         ClockWidgetProvider.scheduleTick(this);
         Toast.makeText(this, getString(R.string.toast_applied), Toast.LENGTH_SHORT).show();
     }
 }
