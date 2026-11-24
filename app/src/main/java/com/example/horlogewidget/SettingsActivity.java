@@ -51,7 +51,7 @@ public class SettingsActivity extends Activity {
         Button btnBrowse = (Button) findViewById(R.id.btn_browse);
         Button btnApply = (Button) findViewById(R.id.btn_apply);
         Button btnReset = (Button) findViewById(R.id.btn_reset);
-        Button btnClose = (Button) findViewById(R.id.btn_close);
+        Button btnFermer = (Button) findViewById(R.id.btn_fermer);
 
         btnBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class SettingsActivity extends Activity {
                 resetSettings();
             }
         });
-        btnClose.setOnClickListener(new View.OnClickListener() {
+        btnFermer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
