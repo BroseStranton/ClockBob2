@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cb_chevron">#F5F5F5</color>
+    <!-- Optionnel : assombrir aussi le fond du champ pour rester cohérent -->
+    <color name="cb_field_bg">#2E2E2E</color>
+</resources>
