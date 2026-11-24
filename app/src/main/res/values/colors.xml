@@ -10,5 +10,5 @@
     <color name="cb_btn_gradient_top">#EDEDED</color>
     <color name="cb_btn_gradient_bottom">#C9C9C9</color>
     <color name="cb_ripple">#33000000</color>
-    <color name="cb_chevron">#1A1A1A</color>
+    <color name="cb_chevron">#E53935</color>
 </resources>
