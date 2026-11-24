@@ -248,10 +248,6 @@ private static byte[] sha256(File f) throws IOException {
             tmp.delete();
             throw new IllegalArgumentException("fonte illisible par Android");
         }
-if (test == null) {
-            tmp.delete();
-            throw new IllegalArgumentException("fonte illisible par Android");
-        }
 
         // Anti-doublon : la même fonte (même contenu binaire) n'est stockée qu'une fois.
         String duplicate = findDuplicate(dir, tmp);
