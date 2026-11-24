@@ -28,8 +28,8 @@ public class DeleteFontActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_font);
 
-        Button btnClose = (Button) findViewById(R.id.btn_close);
-        btnClose.setOnClickListener(new View.OnClickListener() {
+        Button btnFermer = (Button) findViewById(R.id.btn_fermer);
+        btnFermer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
