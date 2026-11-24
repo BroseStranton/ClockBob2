@@ -4,14 +4,15 @@
 
     <!-- Écran de paramètres -->
     <string name="settings_title">Paramètres</string>
-    <string name="settings_warning">TruType (.ttf), OpenType (.otf) ou une collection (.ttc).\nTout ce que cet appareil ne peut pas lire comme une fonte est refusé.</string>
+    <string name="settings_warning">TrueType (.ttf), OpenType (.otf) ou une collection (.ttc).\nTout ce que cet appareil ne peut pas lire comme une fonte est refusé.</string>
     <string name="choose_font_help">Chaque champ : choisir une police</string>
     <string name="label_time_font">Heure</string>
     <string name="label_date_font">Date</string>
     <string name="label_add_font">Ajouter une police</string>
 
     <!-- Boutons -->
-    <string name="btn_browse">…</string>
+    <string name="btn_browse">...</string>
+	<!-- … ces trois petit point c'est un peu petit -->
     <string name="btn_apply">Valider</string>
     <string name="btn_reset">Réinitialiser</string>
     <string name="btn_close">Annuler</string>
@@ -39,6 +40,7 @@
 <string name="btn_delete">Supprimer</string>
 <string name="btn_yes">Oui</string>
 <string name="btn_no">Non</string>
+<string name="btn_fermer">Fermer</string>
 <string name="confirm_delete_font">Voulez-vous vraiment supprimer cette fonte ?</string>
 <string name="no_installed_fonts">Aucune fonte installée.</string>
 </resources>
