@@ -36,7 +36,7 @@
             android:layout_marginTop="14dp"
             android:lineSpacingExtra="3dp"
             android:text="@string/settings_warning"
-            android:textColor="@color/cb_text_muted"
+            android:textColor="#FFFFFF"
             android:textSize="13sp" />
 
         <!-- Filet séparateur -->
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:text="@string/choose_font_help"
-            android:textColor="@color/cb_text_muted"
+            android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
         <!-- HEURE -->
@@ -185,11 +185,11 @@
             android:text="@string/label_manage_fonts" />
 
         <Button
-            android:id="@+id/btn_close"
+            android:id="@+id/btn_fermer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/btn_close" />
+            android:text="@string/btn_fermer" />
     </LinearLayout>
 </LinearLayout>
 
