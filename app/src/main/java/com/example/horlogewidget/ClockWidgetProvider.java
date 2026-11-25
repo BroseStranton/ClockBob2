@@ -59,7 +59,7 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     private static final Map<String, Bitmap> CACHE = new LinkedHashMap<String, Bitmap>(8, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, Bitmap> eldest) {
-            return size() > 8;
+            return size() > 4;
         }
     };
 
@@ -134,12 +134,14 @@ public void onReceive(Context context, Intent intent) {
         float density = context.getResources().getDisplayMetrics().density;
 
         for (int id : ids) {
-            // Dimensions reelles de CE widget, sur-echantillonnees pour la nettete.
+                        // Dimensions reelles de CE widget, sur-echantillonnees pour la nettete.
+            // Plafonnees a 1600 px : au-dela, l'image depasse la limite d'envoi
+            // IPC (~1 Mo) de RemoteViews et la mise a jour echoue silencieusement.
             Bundle opts = mgr.getAppWidgetOptions(id);
-            int w = Math.max(600, (int) (opts.getInt(
-                    AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110) * density * OVERSAMPLE));
-            int h = Math.max(300, (int) (opts.getInt(
-                    AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * OVERSAMPLE));
+            int w = Math.max(600, Math.min(1600, (int) (opts.getInt(
+                    AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110) * density * OVERSAMPLE)));
+            int h = Math.max(300, Math.min(900, (int) (opts.getInt(
+                    AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * OVERSAMPLE)));
 
             Bitmap bitmap = render(w, h, timeText, timeFont, dateText, dateFont);
 
@@ -175,7 +177,10 @@ public void onReceive(Context context, Intent intent) {
                 return cached;
             }
         }
-        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        // RGB_565 : 2 octets par pixel au lieu de 4 (le fond du widget est
+        // opaque, la transparence alpha est inutile). Memoire divisee par 2,
+        // ce qui rend l'app moins ciblee par le "killer" de MIUI.
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bmp);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
         p.setShadowLayer(6, 4, 4, 0x66000000);
