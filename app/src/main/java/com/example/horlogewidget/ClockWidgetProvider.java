@@ -222,16 +222,18 @@ public void onReceive(Context context, Intent intent) {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
-    /** Programme le prochain tic a la frontiere de la minute suivante. */
+       /** Programme le prochain tic a la frontiere de la minute suivante. */
     static void scheduleTick(Context context) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long delay = 60000 - (System.currentTimeMillis() % 60000);
-        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + delay, tickPendingIntent(context));
+        long trigger = SystemClock.elapsedRealtime() + delay;
+        PendingIntent pi = tickPendingIntent(context);
+        try {
+            // Alarme exacte (nominalement, une fois par minute).
+            am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, trigger, pi);
+        } catch (SecurityException e) {
+            // Android a refuse l'alarme exacte : on retombe sur une alarme
+            // approximative, moins precisa mais qui continue de faire vivre le widget.
+            am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, trigger, pi);
+        }
     }
-
-    static void cancelTick(Context context) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(tickPendingIntent(context));
-    }
-}
