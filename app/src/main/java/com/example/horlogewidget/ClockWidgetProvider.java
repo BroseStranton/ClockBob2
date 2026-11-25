@@ -237,3 +237,10 @@ public void onReceive(Context context, Intent intent) {
             am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, trigger, pi);
         }
     }
+
+     /** Annule l'alarme de rafraichissement (quand le dernier widget est supprime). */
+    static void cancelTick(Context context) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(tickPendingIntent(context));
+    }
+}
