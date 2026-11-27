@@ -151,44 +151,72 @@ public class SettingsActivity extends Activity {
         startActivityForResult(intent, REQUEST_PICK_FONT);
     }
 
-  @Override
-protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    if (requestCode != REQUEST_PICK_FONT || resultCode != RESULT_OK
-            || data == null || data.getData() == null) {
-        return;
-    }
-
-    Uri uri = data.getData();
-    String suggested = queryDisplayName(uri);
-
-    InputStream in = null;
-    try {
-        in = getContentResolver().openInputStream(uri);
-        String storedName = FontStore.importFont(this, in, suggested);
-        editFileName.setText(displayName(storedName));
-        reloadSpinners();
-        Toast.makeText(this, getString(R.string.toast_imported), Toast.LENGTH_SHORT).show();
-    } catch (FontStore.DuplicateFontException e) {
-        // La même fonte est déjà stockée : import ignoré, sans erreur.
-        editFileName.setText(displayName(e.existingName));
-        Toast.makeText(this, getString(R.string.toast_copied), Toast.LENGTH_SHORT).show();
-    } catch (IllegalArgumentException e) {
-        editFileName.setText("");
-        Toast.makeText(this, getString(R.string.toast_invalid), Toast.LENGTH_LONG).show();
-    } catch (IOException e) {
-        editFileName.setText("");
-        Toast.makeText(this, getString(R.string.toast_error), Toast.LENGTH_LONG).show();
-    } finally {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException ignored) {
-            }
+        if (requestCode != REQUEST_PICK_FONT || resultCode != RESULT_OK
+                || data == null || data.getData() == null) {
+            return;
         }
+
+        final Uri uri = data.getData();
+        final String suggested = queryDisplayName(uri);
+        final android.content.Context appContext = getApplicationContext();
+
+        // L'import (copie + verification) peut etre long : on le fait en arriere-plan.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String stored = null;
+                String existing = null;
+                int messageRes;
+                InputStream in = null;
+                try {
+                    in = getContentResolver().openInputStream(uri);
+                    stored = FontStore.importFont(appContext, in, suggested);
+                    messageRes = R.string.toast_imported;
+                } catch (FontStore.DuplicateFontException e) {
+                    existing = e.existingName;
+                    messageRes = R.string.toast_copied;
+                } catch (IllegalArgumentException e) {
+                    messageRes = R.string.toast_invalid;
+                } catch (IOException e) {
+                    messageRes = R.string.toast_error;
+                } catch (RuntimeException e) {
+                    messageRes = R.string.toast_error;
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException ignored) {
+                        }
+                    }
+                }
+
+                final boolean imported = (stored != null);
+                final String shown = imported ? displayName(stored)
+                        : (existing != null ? displayName(existing) : "");
+                final int msg = messageRes;
+                final boolean ok = imported || existing != null;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing()) {
+                            return;
+                        }
+                        editFileName.setText(shown);
+                        if (imported) {
+                            reloadSpinners();
+                        }
+                        Toast.makeText(SettingsActivity.this, getString(msg),
+                                ok ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }).start();
     }
-}
 
     /** Nom d'origine du fichier choisi, lu dans le fournisseur de contenu. */
     private String queryDisplayName(Uri uri) {
