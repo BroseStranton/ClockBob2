@@ -212,9 +212,18 @@ private static byte[] sha256(File f) throws IOException {
         byte[] buf = new byte[8192];
         byte[] head = new byte[4];
         int headFilled = 0;
+        final long maxBytes = 30L * 1024 * 1024;   // 30 Mo maximum
+        long total = 0;
+        boolean tooBig = false;
+        boolean failed = true;
         try {
             int n;
             while ((n = in.read(buf)) > 0) {
+                total += n;
+                if (total > maxBytes) {
+                    tooBig = true;
+                    break;
+                }
                 int take = Math.min(n, 4 - headFilled);
                 if (take > 0) {
                     System.arraycopy(buf, 0, head, headFilled, take);
@@ -223,6 +232,7 @@ private static byte[] sha256(File f) throws IOException {
                 out.write(buf, 0, n);
             }
             out.flush();
+            failed = false;
         } finally {
             try {
                 in.close();
@@ -232,6 +242,12 @@ private static byte[] sha256(File f) throws IOException {
                 out.close();
             } catch (IOException ignored) {
             }
+            if (failed || tooBig) {
+                tmp.delete();
+            }
+        }
+        if (tooBig) {
+            throw new IllegalArgumentException("fichier trop gros");
         }
         if (headFilled < 4 || !signatureLooksLikeFont(head)) {
             tmp.delete();
