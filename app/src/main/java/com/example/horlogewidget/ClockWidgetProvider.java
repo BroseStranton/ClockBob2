@@ -177,13 +177,11 @@ public void onReceive(Context context, Intent intent) {
                 return cached;
             }
         }
-        // RGB_565 : 2 octets par pixel au lieu de 4 (le fond du widget est
-        // opaque, la transparence alpha est inutile). Memoire divisee par 2,
-        // ce qui rend l'app moins ciblee par le "killer" de MIUI.
-        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        // ARGB_8888 : fond transparent, pour laisser voir le rectangle noir
+        // semi-transparent (58 %) defini dans widget_background.xml.
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-        p.setShadowLayer(6, 4, 4, 0x66000000);
 
         int hTime = (int) (h * TIME_BAND);
         p.setColor(TIME_COLOR);
