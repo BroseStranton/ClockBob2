@@ -138,10 +138,17 @@ public void onReceive(Context context, Intent intent) {
             // Plafonnees a 1600 px : au-dela, l'image depasse la limite d'envoi
             // IPC (~1 Mo) de RemoteViews et la mise a jour echoue silencieusement.
             Bundle opts = mgr.getAppWidgetOptions(id);
-            int w = Math.max(600, Math.min(1600, (int) (opts.getInt(
-                    AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110) * density * OVERSAMPLE)));
-            int h = Math.max(300, Math.min(900, (int) (opts.getInt(
-                    AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 40) * density * OVERSAMPLE)));
+            // Telephone en portrait : largeur = MIN_WIDTH, hauteur = MAX_HEIGHT.
+            int wDp = opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110);
+            int hDp = opts.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 48);
+            if (wDp <= 0) wDp = 110;
+            if (hDp <= 0) hDp = 48;
+            float wPx = wDp * density * OVERSAMPLE;
+            float hPx = hDp * density * OVERSAMPLE;
+            // Si trop grand, on reduit en gardant les proportions du widget.
+            float shrink = Math.min(1f, Math.min(1600f / wPx, 900f / hPx));
+            int w = Math.max(100, (int) (wPx * shrink));
+            int h = Math.max(50, (int) (hPx * shrink));
 
             Bitmap bitmap = render(w, h, timeText, timeFont, dateText, dateFont);
 
