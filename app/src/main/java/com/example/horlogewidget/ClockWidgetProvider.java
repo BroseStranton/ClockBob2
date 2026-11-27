@@ -206,21 +206,28 @@ public void onReceive(Context context, Intent intent) {
     private static void drawFit(Canvas canvas, String text, Typeface tf,
                                 int w, int bandH, int yOffset, Paint p) {
         p.setTypeface(tf);
+        android.graphics.Rect b = new android.graphics.Rect();
+
+        // Mesure a taille de reference, sur l'encre reelle du texte
+        // (et non sur la hauteur de ligne de la police).
         float size = 200f;
         p.setTextSize(size);
-        float tw = p.measureText(text);
-        Paint.FontMetrics fm = p.getFontMetrics();
-        float th = fm.descent - fm.ascent;
-        float scale = Math.min(w * 0.92f / tw, bandH * 0.92f / th);
+        p.getTextBounds(text, 0, text.length(), b);
+        float tw = Math.max(1, b.width());
+        float th = Math.max(1, b.height());
+
+        float scale = Math.min(w * 0.96f / tw, bandH * 0.92f / th);
         size *= scale;
         if (size < 1f) {
             size = 1f;
         }
         p.setTextSize(size);
-        tw = p.measureText(text);
-        fm = p.getFontMetrics();
-        float baseline = yOffset + bandH / 2f - (fm.ascent + fm.descent) / 2f;
-        canvas.drawText(text, (w - tw) / 2f, baseline, p);
+        p.getTextBounds(text, 0, text.length(), b);
+
+        // Centrage horizontal et vertical sur le texte reel.
+        float x = (w - b.width()) / 2f - b.left;
+        float baseline = yOffset + bandH / 2f - (b.top + b.bottom) / 2f;
+        canvas.drawText(text, x, baseline, p);
     }
 
     // ---------- Compte a rebours d'une minute ----------
