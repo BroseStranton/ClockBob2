@@ -65,8 +65,8 @@ public class ClockWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        pushAll(context, appWidgetManager, appWidgetIds);
-        scheduleTick(context);
+        // Rien ici : onReceive() s'occupe deja du dessin et de l'alarme,
+        // ce qui evite de dessiner le widget deux fois.
     }
 
     @Override
@@ -117,8 +117,8 @@ public void onReceive(Context context, Intent intent) {
         if (ids == null || ids.length == 0) {
             return;
         }
-        Typeface timeFont = FontStore.loadFont(context, FontStore.prefsGet(context, FontStore.KEY_TIME_FONT));
-        Typeface dateFont = FontStore.loadFont(context, FontStore.prefsGet(context, FontStore.KEY_DATE_FONT));
+        Typeface timeFont = cachedFont(context, FontStore.prefsGet(context, FontStore.KEY_TIME_FONT));
+        Typeface dateFont = cachedFont(context, FontStore.prefsGet(context, FontStore.KEY_DATE_FONT));
 
         Date now = new Date();
         Locale locale = Locale.getDefault();
@@ -159,6 +159,34 @@ public void onReceive(Context context, Intent intent) {
         }
     }
 
+        /** Polices deja chargees : evite de relire le fichier a chaque minute. */
+    private static final Map<String, Typeface> FONT_CACHE = new java.util.HashMap<String, Typeface>();
+
+    private static Typeface cachedFont(Context context, String name) {
+        java.io.File f = FontStore.fontFile(context, name);
+        if (f == null) {
+            return null;  // police systeme
+        }
+        // La cle change si le fichier est remplace ou modifie.
+        String key = name + "|" + f.lastModified() + "|" + f.length();
+        synchronized (FONT_CACHE) {
+            Typeface cached = FONT_CACHE.get(key);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        Typeface loaded = FontStore.loadFont(context, name);
+        if (loaded != null) {
+            synchronized (FONT_CACHE) {
+                if (FONT_CACHE.size() > 6) {
+                    FONT_CACHE.clear();  // evite d'accumuler des polices supprimees
+                }
+                FONT_CACHE.put(key, loaded);
+            }
+        }
+        return loaded;
+    }
+    
     /** Clic sur le widget : ouvrir l'horloge systeme, comme ClockStf. */
     private static PendingIntent clockPendingIntent(Context context) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.android.deskclock");
