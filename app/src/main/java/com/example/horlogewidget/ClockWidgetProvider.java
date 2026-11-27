@@ -100,8 +100,14 @@ public void onReceive(Context context, Intent intent) {
             || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)
             || Intent.ACTION_DATE_CHANGED.equals(action);
     if (ours || system) {
-        pushAll(context);
-        scheduleTick(context);  // toujours ré-armer, même après reboot/réinstallation
+        // D'abord l'alarme suivante : la chaine ne doit jamais se casser,
+        // meme si le dessin plante.
+        scheduleTick(context);
+        try {
+            pushAll(context);
+        } catch (Exception | OutOfMemoryError e) {
+            // On ignore : le prochain tic (dans une minute) reessaiera.
+        }
     }
 }
 
