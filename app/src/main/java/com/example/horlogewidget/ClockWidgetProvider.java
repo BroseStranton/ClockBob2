@@ -216,7 +216,7 @@ public void onReceive(Context context, Intent intent) {
         float tw = Math.max(1, b.width());
         float th = Math.max(1, b.height());
 
-        float scale = Math.min(w * 0.96f / tw, bandH * 0.92f / th);
+        float scale = Math.min(w * 0.82f / tw, bandH * 0.92f / th);
         size *= scale;
         if (size < 1f) {
             size = 1f;
